@@ -6,7 +6,8 @@
   "repository": "YerkoPalma/blank-app-shell",
   "scripts": {
     "test": "standard --verbose | snazzy && ava tests/*.js",
-    "start": "budo src/index.js:dist/bundle.js --open --verbose --pushstate --host 0.0.0.0 --port 8080 -- -t es2040 -t rollupify"
+    "start": "budo src/index.js:dist/bundle.js --open --verbose --pushstate --host 0.0.0.0 --port 8080 -- -t es2040 -t rollupify",
+    "build": "NODE_ENV=production browserify -e src/index.js -t es2040 -t rollupify -t yo-yoify > dist/bundle.js"
   },
   "keywords": [
     "appshell",
