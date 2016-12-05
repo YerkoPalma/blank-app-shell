@@ -5,5 +5,5 @@ export default yo`
 <div onclick=${(ev) => {
       fadeOut(ev.target)
       document.getElementById('header').style.opacity = '1'
-    }} class='absolute w-100 h-100 cover bg-black-60 o-0'>
+    }} class='absolute w-100 h-100 cover bg-black-60 o-0 z-1 dn'>
 </div>`

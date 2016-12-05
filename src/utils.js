@@ -1,6 +1,6 @@
 export function fadeIn (el) {
-  el.style.opacity = 0
-
+  // el.style.opacity = 0
+  el.style.display = 'block'
   var last = +new Date()
   var tick = function () {
     el.style.opacity = +el.style.opacity + (new Date() - last) / 400
