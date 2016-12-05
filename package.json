@@ -1,0 +1,31 @@
+{
+  "name": "workspace",
+  "version": "0.0.1",
+  "description": "Starting app shell with choo@4",
+  "main": "index.js",
+  "repository": "YerkoPalma/blank-app-shell",
+  "scripts": {
+    "test": "standard --verbose | snazzy && ava tests/*.js",
+    "start": "budo src/index.js:dist/bundle.js --open --verbose --pushstate --host 0.0.0.0 --port 8080 -- -t es2040 -t rollupify"
+  },
+  "keywords": [
+    "appshell",
+    "offline",
+    "webapp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "yo-yo": "^1.3.1"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "browserify": "^13.1.1",
+    "budo": "^9.2.2",
+    "es2040": "^1.2.4",
+    "rollupify": "^0.3.5",
+    "snazzy": "^5.0.0",
+    "standard": "^8.6.0",
+    "yo-yoify": "^3.5.0"
+  }
+}
