@@ -36,11 +36,11 @@ export function fadeOut (el) {
 export function slideLeft (el) {
   var start = null
   // initial left value
-  var init = +el.style.left.match(/\-?\d*/)[0]
+  var init = +el.style.left.match(/-?\d*/)[0]
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init - Math.min(progress/10, 16) + 'rem'
+    el.style.left = init - Math.min(progress / 10, 16) + 'rem'
 
     if (progress < 1000) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
@@ -54,11 +54,11 @@ export function slideLeft (el) {
 export function slideRight (el) {
   var start = null
   // initial left value
-  var init = +el.style.left.match(/\-?\d*/)[0]
+  var init = +el.style.left.match(/-?\d*/)[0]
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init + Math.min(progress/10, 16) + 'rem'
+    el.style.left = init + Math.min(progress / 10, 16) + 'rem'
 
     if (progress < 1000) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
