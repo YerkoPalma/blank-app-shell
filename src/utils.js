@@ -40,7 +40,7 @@ export function slideLeft (el) {
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init - Math.min(progress / 10, 16) + 'rem'
+    el.style.left = init - Math.min(progress / 10, 25) + '%'
 
     if (progress < 1000) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
@@ -58,7 +58,7 @@ export function slideRight (el) {
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init + Math.min(progress / 10, 16) + 'rem'
+    el.style.left = init + Math.min(progress / 10, 25) + '%'
 
     if (progress < 1000) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
