@@ -1,5 +1,5 @@
 export function fadeIn (el) {
-  // el.style.opacity = 0
+  el.style.opacity = 0
   el.style.display = 'block'
   var last = +new Date()
   var tick = function () {
@@ -31,4 +31,40 @@ export function fadeOut (el) {
   }
 
   tick()
+}
+
+export function slideLeft (el) {
+  var start = null
+  // initial left value
+  var init = +el.style.left.match(/\-?\d*/)[0]
+  var tick = function (timestamp) {
+    if (!start) start = timestamp
+    var progress = timestamp - start
+    el.style.left = init - Math.min(progress/10, 16) + 'rem'
+
+    if (progress < 1000) {
+      (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
+      // after changing opacity, actually hide the element
+    }
+  }
+
+  window.requestAnimationFrame(tick)
+}
+
+export function slideRight (el) {
+  var start = null
+  // initial left value
+  var init = +el.style.left.match(/\-?\d*/)[0]
+  var tick = function (timestamp) {
+    if (!start) start = timestamp
+    var progress = timestamp - start
+    el.style.left = init + Math.min(progress/10, 16) + 'rem'
+
+    if (progress < 1000) {
+      (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
+      // after changing opacity, actually hide the element
+    }
+  }
+
+  window.requestAnimationFrame(tick)
 }

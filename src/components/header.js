@@ -1,12 +1,12 @@
 import yo from 'yo-yo'
-import { fadeIn } from '../utils'
-import sideNav from './sidenav'
+import { fadeIn, slideRight } from '../utils'
 
 export default yo`
-<div id='header'>
-  <header class='bg-dark-green ph5 pt5 pb3 relative shadow-3'>
+<div>
+  <header id='header' class='bg-dark-green ph5 pt5 pb3 relative shadow-3'>
     <button onclick=${() => {
-      fadeIn(sideNav)
+      slideRight(document.getElementById('sidenav'))
+      fadeIn(document.getElementById('sidenav-panel'))
       document.getElementById('header').style.opacity = '0.4'
     }} role='tab' class='link dim pointer absolute top-1 left-1 input-reset button-reset bg-transparent bn w3 h2'>
       <span class='absolute bg-white w-80 h-25 mt0 left-0 top-0 mh1'></span>
