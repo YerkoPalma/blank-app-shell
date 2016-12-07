@@ -6,6 +6,7 @@ export default yo`
   <header id='header' class='bg-dark-green ph5 pt5 pb3 relative shadow-3'>
     <button onclick=${() => {
       slideRight(document.getElementById('sidenav'))
+      document.getElementById('sidenav').classList.add('open')
       fadeIn(document.getElementById('sidenav-panel'))
       document.getElementById('header').style.opacity = '0.4'
     }} role='tab' class='link dim pointer absolute top-1 left-1 input-reset button-reset bg-transparent bn w3 h2'>
