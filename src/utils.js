@@ -36,13 +36,14 @@ export function fadeOut (el) {
 export function slideLeft (el) {
   var start = null
   // initial left value
-  var init = +el.style.left.match(/-?\d*/)[0]
+  var initLeft = +el.style.left.match(/-?\d*/)[0]
+  var initWidth = +window.getComputedStyle(el, null).width.match(/(\-?\d*?\.?\d*)(\w*)/)[1]
+
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init - Math.min(progress / 10, 25) + '%'
-
-    if (progress < 1000) {
+    el.style.left = +(initLeft - Math.min(progress / 2, initWidth)) + 'px'
+    if (+el.style.left.match(/-?\d*/)[0] > (initWidth * -1)) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
       // after changing opacity, actually hide the element
     }
@@ -54,13 +55,14 @@ export function slideLeft (el) {
 export function slideRight (el) {
   var start = null
   // initial left value
-  var init = +el.style.left.match(/-?\d*/)[0]
+  var initLeft = +el.style.left.match(/-?\d*/)[0]
+  var initWidth = +window.getComputedStyle(el, null).width.match(/(\-?\d*?\.?\d*)(\w*)/)[1]
+
   var tick = function (timestamp) {
     if (!start) start = timestamp
     var progress = timestamp - start
-    el.style.left = init + Math.min(progress / 10, 25) + '%'
-
-    if (progress < 1000) {
+    el.style.left = +(initLeft + Math.min(progress / 2, initWidth)) + 'px'
+    if (+el.style.left.match(/-?\d*/)[0] < 0) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
       // after changing opacity, actually hide the element
     }
