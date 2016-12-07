@@ -1,4 +1,4 @@
-import { parseRoute } from '../utils'
+import UrlPattern from 'url-pattern'
 import yo from 'yo-yo'
 
 /*
@@ -10,6 +10,7 @@ import yo from 'yo-yo'
  *  router.addRoute('/', HomeView)
  *  router.addRoute('/about', AboutView)
  *  router.addRoute('/user/:id', UserView)
+ *  router.setRoute('/')
  *
  *  Views are supposed to be yo-yo functions
  *
@@ -34,9 +35,11 @@ export default class RouterSingleton {
 
 class Router {
   constructor () {
-    this.routes = []
+    this.routes = {}
     this.currentPath = null
-    this.defaultActivity = null
+    this.currentRoute = null
+    this.previousRoute = null
+    this.root = null
 
     window.addEventListener('popstate', e => {
       this.onPopState(e)
@@ -44,12 +47,24 @@ class Router {
   }
 
   addRoute (pattern, view) {
-    this.routes.push(new Route(pattern, view))
+    this.routes[pattern] = new Route(pattern, view)
+  }
+
+  setRoot (path) {
+    this.root = this.getRoute(path) || new Route('/', () => yo`<div></div>`)
   }
 
   onPopState (e) {
     e.preventDefault()
     this.requestStateUpdate()
+  }
+
+  getRoute (path) {
+    for (var pattern in this.routes) {
+      if (this.routes.hasOwnProperty(pattern)) {
+        if (this.routes[pattern]._urlPattern.match(path) !== null) return this.routes[pattern]
+      }
+    }
   }
 
   goToPath (path, title = null) {
@@ -58,6 +73,9 @@ class Router {
     if (path === window.location.pathname) {
       return
     }
+    this.previousRoute = this.currentRoute || this.root
+    this.currentRoute = this.getRoute(this.currentPath)
+    this.currentPath = path
 
     window.history.pushState(undefined, title, path)
     window.requestAnimationFrame(() => {
@@ -67,7 +85,8 @@ class Router {
 
   manageState () {
     // TODO
-    yo.update()
+    yo.update(this.previousRoute(), this.currentRoute())
+    // not mounting yet
   }
 
   requestStateUpdate () {
@@ -80,8 +99,9 @@ class Router {
 class Route {
   constructor (pattern, view) {
     this.pattern = pattern
+    this._urlPattern = new UrlPattern(pattern)
     this.view = view
-    this.params = parseRoute(pattern, null)
+    this.params = null
     this.path = null
   }
 
@@ -91,8 +111,8 @@ class Route {
   }
 
   onStart () {
-    this.path = '' // should be the href?
-    this.params = parseRoute(this.pattern, this.path)
-    this.view(this.params)()
+    this.path = window.location.pathname
+    this.params = this._urlPattern.match(this.path)
+    this.view(this.params)
   }
 }
