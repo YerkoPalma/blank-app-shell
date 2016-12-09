@@ -10,15 +10,15 @@ export default yo`
     <ul class='absolute top-2 mt6 list light-silver f2'>
       <li class='flex flex-row flex-wrap justify-start content-center items-center mv3'>
         <i class="material-icons">info_outline</i> 
-        <a href="#" class="link f4 silver hover-dark-green self-center ml2">Home</a>
+        <a href="#" data-route="/" class="link f4 silver hover-dark-green self-center ml2">Home</a>
       </li>
       <li class='flex flex-row flex-wrap justify-start content-center items-center mv3'>
         <i class="material-icons">info_outline</i> 
-        <a href="#" class="link f4 silver hover-dark-green self-center ml2">About</a>
+        <a href="#" data-route="/about" class="link f4 silver hover-dark-green self-center ml2">About</a>
       </li>
       <li class='flex flex-row flex-wrap justify-start content-center items-center mv3'>
         <i class="material-icons">info_outline</i> 
-        <a href="#" class="link f4 silver hover-dark-green self-center ml2">Contact</a>
+        <a href="#" data-route="/user/123" class="link f4 silver hover-dark-green self-center ml2">Profile</a>
       </li>
     </ul>
   </aside>

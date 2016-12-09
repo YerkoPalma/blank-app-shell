@@ -1,3 +1,3 @@
 import yo from 'yo-yo'
 
-export default params => yo`<h1>User</h1>`
+export default params => yo`<h1>User ${JSON.stringify(params)}</h1>`

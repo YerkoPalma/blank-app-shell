@@ -16,4 +16,5 @@ document.addEventListener('DOMContentLoaded', e => {
   router.addRoute('/about', AboutView)
   router.addRoute('/user/:id', UserView)
   router.setRoot('/')
+  router.start('#app')
 })
