@@ -125,7 +125,9 @@ class Router {
 
   requestStateUpdate (e) {
     console.log('Requesting status update')
-    this.currentRoute = this.getRoute(e.target.getAttribute('data-route') || window.location.pathname)
+    this.currentRoute = this.getRoute(e.target !== window
+                                      ? e.target.getAttribute('data-route')
+                                      : window.location.pathname)
 
     window.requestAnimationFrame(() => {
       this.manageState()
