@@ -16,6 +16,15 @@
       <div id="app">
       </div>
     </main>
-    <script type="text/javascript" src="dist/bundle.js"></script>
+    <script type="text/javascript">
+      (function () {
+        var scriptSrc = window.location.origin + '/dist/bundle.js'
+        var scriptTag = document.createElement('script')
+        var self = document.getElementsByTagName('script')[0]
+        scriptTag.async = 1
+        scriptTag.src = scriptSrc
+        self.parentNode.insertBefore(scriptTag, self)
+      })()
+    </script>
   </body>
 </html>
