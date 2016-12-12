@@ -71,14 +71,15 @@ class Router {
   }
 
   setRoot (path) {
-    console.log(`Setting route ${path}`)
+    console.log(`Setting root ${path}`)
     this.root = this.getRoute(path) || new Route('/', () => yo`<div></div>`)
   }
 
   start (selector) {
     console.log(`Starting router on ${selector}`)
     this.rootEl = document.querySelector(selector) || document.body
-    if (this.root) yo.update(this.rootEl, this.root.onStart())
+    this.requestStateUpdate()
+    // if (this.root) yo.update(this.rootEl, this.root.onStart())
   }
 
   onPopState (e) {
@@ -125,7 +126,7 @@ class Router {
 
   requestStateUpdate (e) {
     console.log('Requesting status update')
-    this.currentRoute = this.getRoute(e.target !== window
+    this.currentRoute = this.getRoute(e && e.target !== window
                                       ? e.target.getAttribute('data-route')
                                       : window.location.pathname)
 
