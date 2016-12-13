@@ -4,7 +4,7 @@ import { fadeOut, slideLeft } from '../utils'
 export default yo`
 <div>
   <aside onload=${function (e) { e.style.left = `-${window.getComputedStyle(e, null).width}` }} id='sidenav' class='absolute h-100 w-75 w-25-l w-50-m bg-white shadow-3 left-0 top-0 z-2'>
-    <div style='background-image: url(src/images/green-bg.png)' class='absolute cover w-100 h4'>
+    <div style='background-image: url(${window.location.origin}/src/images/green-bg.png)' class='absolute cover w-100 h4'>
       <h2 class='white w-80 tl pl3 mt5'>App Shell</h2>
     </div>
     <ul class='absolute top-2 mt6 list light-silver f2'>
