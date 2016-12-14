@@ -45,7 +45,6 @@ class Router {
     this.rootEl = null
 
     window.addEventListener('popstate', e => {
-      console.log('Popstate trigered')
       this.onPopState(e)
     })
 
@@ -67,7 +66,6 @@ class Router {
   }
 
   addRoute (pattern, view) {
-    console.log(`Adding route for ${pattern}`)
     this.routes[pattern] = new Route(pattern, view)
   }
 
@@ -83,25 +81,19 @@ class Router {
   }
 
   onPopState (e) {
-    console.log('OnPopState')
     e.preventDefault()
     this.requestStateUpdate(e)
   }
 
   getRoute (path) {
-    console.log(`Getting to path ${path}`)
     for (var pattern in this.routes) {
       if (this.routes.hasOwnProperty(pattern)) {
-        console.log(`pattern = ${pattern}`)
-        console.log(`this.routes[pattern] = ${this.routes[pattern]}`)
-        console.log(`this.routes[pattern]._urlPattern.match(path) = ${this.routes[pattern]._urlPattern.match(path)}`)
         if (this.routes[pattern]._urlPattern.match(path) !== null) return this.routes[pattern]
       }
     }
   }
 
   goToPath (path, title = null) {
-    console.log(`${window.location.pathname} -> ${path}`)
     // Only process real changes.
     if (path === window.location.pathname) {
       return
@@ -118,12 +110,10 @@ class Router {
   }
 
   manageState () {
-    console.log(`Managing state for ${this.currentRoute.view()}`)
     document.querySelector('main').innerHTML = this.currentRoute.onStart().outerHTML
   }
 
   requestStateUpdate (e) {
-    console.log('Requesting status update')
     this.currentRoute = this.getRoute(e && e.target !== window
                                       ? e.target.getAttribute('data-route')
                                       : window.location.pathname)

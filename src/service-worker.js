@@ -1,21 +1,64 @@
 /* eslint-env serviceworker */
-/* global fetch */
+/* global fetch URL Request */
 
-var cacheName = 'sw-test-0.0.4'
-var dataCacheName = 'sw-test-data-0.0.4'
+var version = '0.0.2'
+var cacheName = 'appshell-sw-v' + version
 
-/* var filesToCache = [
+var filesToCache = [
   '/',
   '/index.html',
-  '/app.js'
-] */
+  '/dist/bundle.js',
+  '/src/images/green-bg.png'
+]
+
+// Returns an object with one property per file to cache, where the key is the
+// filename with the version added, and the value is the absolute url
+// (arr) -> obj
+var expectedUrls = function (files) {
+  var urlSet = {}
+  files.forEach(function (file) {
+    urlSet[file + version] = new URL(file, self.location)
+  })
+  return urlSet
+}
+
+// Get only the values of the set of expected cahe urls
+// arr
+var absoluteUrlsExpected = (function () {
+  var urls = []
+  var expecteds = expectedUrls(filesToCache)
+  for (var urlKey in expecteds) {
+    urls.push(expecteds[urlKey])
+  }
+  return urls
+})()
+
+// Return the urls already cached
+// (cache) -> Promise
+var cachedUrls = function (cache) {
+  return cache.keys().then(function (requests) {
+    return requests.map(function (request) {
+      return request.url
+    })
+  }).then(function (urls) {
+    return new Set(urls)
+  })
+}
 
 self.addEventListener('install', function (e) {
   console.log('[ServiceWorker] Install')
   e.waitUntil(
     caches.open(cacheName).then(function (cache) {
       console.log('[ServiceWorker] Caching app shell')
-      // return cache.addAll(filesToCache)
+      return cachedUrls(cache).then(function (urls) {
+        return Promise.all(
+          absoluteUrlsExpected.map(function (expectedUrl) {
+            if (!urls.has(expectedUrl)) {
+              return cache.add(new Request(expectedUrl, { credentials: 'same-origin' }))
+            }
+          })
+        )
+      })
     }).then(function () {
       // Force the SW to transition from installing -> active state
       return self.skipWaiting()
@@ -25,14 +68,16 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('activate', function (e) {
   console.log('[ServiceWorker] Activate')
+  var setOfExpectedUrls = new Set(absoluteUrlsExpected)
   e.waitUntil(
-    caches.keys().then(function (keyList) {
-      return Promise.all(keyList.map(function (key) {
-        console.log('[ServiceWorker] Removing old cache', key)
-        // if (key !== cacheName) {
-        //   return caches.delete(key)
-        // }
-      }))
+    caches.keys().then(function (existingRequests) {
+      return Promise.all(
+        existingRequests.map(function (existingRequest) {
+          if (!setOfExpectedUrls.has(existingRequest.url)) {
+            console.log('[ServiceWorker] Removing old cache', existingRequest.url)
+          }
+        })
+      )
     }).then(function () {
       return self.clients.claim()
     })
@@ -40,26 +85,26 @@ self.addEventListener('activate', function (e) {
 })
 
 self.addEventListener('fetch', function (e) {
-  console.log('[ServiceWorker] Fetch', e.request.url)
-  // var dataUrl = 'https://sw-test-43ffd.firebaseio.com/'
-  // if (e.request.url.indexOf(dataUrl) === 0) {
-  e.respondWith(
-    fetch(e.request)
-      .then(function (response) {
-        return caches.open(dataCacheName).then(function (cache) {
-          // cache.put(e.request.url, response.clone())
-          console.log('[ServiceWorker] Fetched&Cached Data')
-          return response
+  if (e.request.method === 'GET') {
+    console.log('[ServiceWorker] Fetch', e.request.url)
+    // var dataUrl = 'https://sw-test-43ffd.firebaseio.com/'
+    // if (e.request.url.indexOf(dataUrl) === 0) {
+    e.respondWith(
+      caches.open(cacheName).then(function (cache) {
+        return cache.match(e.request.url).then(function (response) {
+          if (response) {
+            return response
+          }
+          throw Error('The cached response that was expected is missing.')
         })
+      }).catch(function (err) {
+        // Fall back to just fetch()ing the request if some unexpected error
+        // prevented the cached response from being valid.
+        console.warn('Couldn\'t serve response for "%s" from cache: %O', e.request.url, err)
+        return fetch(e.request)
       })
-  )
-  // } else {
-  //   e.respondWith(
-  //     caches.match(e.request).then(function (response) {
-  //       return response || fetch(e.request)
-  //     })
-  //   )
-  // }
+    )
+  }
 })
 
 // PUSH NOTIFICATIONS

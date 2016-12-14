@@ -17,6 +17,7 @@ document.body.insertBefore(sidenav, newHeader)
 
 // register service-worker
 if ('serviceWorker' in navigator) {
+  console.log(`env: ${process.env.NODE_ENV}`)
   if (process.env.NODE_ENV === 'production') {
     navigator.serviceWorker.register('service-worker.js').then(function (reg) {
       reg.onupdatefound = function () {
