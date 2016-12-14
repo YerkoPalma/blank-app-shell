@@ -4,11 +4,11 @@
 var cacheName = 'sw-test-0.0.4'
 var dataCacheName = 'sw-test-data-0.0.4'
 
-var filesToCache = [
+/* var filesToCache = [
   '/',
   '/index.html',
   '/app.js'
-]
+] */
 
 self.addEventListener('install', function (e) {
   console.log('[ServiceWorker] Install')
@@ -16,6 +16,9 @@ self.addEventListener('install', function (e) {
     caches.open(cacheName).then(function (cache) {
       console.log('[ServiceWorker] Caching app shell')
       // return cache.addAll(filesToCache)
+    }).then(function () {
+      // Force the SW to transition from installing -> active state
+      return self.skipWaiting()
     })
   )
 })
@@ -31,7 +34,7 @@ self.addEventListener('activate', function (e) {
         // }
       }))
     }).then(function () {
-      // return self.clients.claim()
+      return self.clients.claim()
     })
   )
 })

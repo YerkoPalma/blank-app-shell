@@ -12,6 +12,7 @@ import { fadeOut, slideLeft } from '../utils'
  *  router.addRoute('/about', AboutView)
  *  router.addRoute('/user/:id', UserView)
  *  router.setRoute('/')
+ *  router.start('#app')
  *
  *  Views are supposed to be yo-yo functions
  *
@@ -79,7 +80,6 @@ class Router {
     console.log(`Starting router on ${selector}`)
     this.rootEl = document.querySelector(selector) || document.body
     this.requestStateUpdate()
-    // if (this.root) yo.update(this.rootEl, this.root.onStart())
   }
 
   onPopState (e) {
@@ -118,10 +118,8 @@ class Router {
   }
 
   manageState () {
-    // TODO
     console.log(`Managing state for ${this.currentRoute.view()}`)
     document.querySelector('main').innerHTML = this.currentRoute.onStart().outerHTML
-    // not mounting yet
   }
 
   requestStateUpdate (e) {

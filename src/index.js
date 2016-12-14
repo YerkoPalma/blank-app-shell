@@ -56,7 +56,9 @@ if ('serviceWorker' in navigator) {
 
       navigator.serviceWorker.ready.then(function (reg) {
         reg.pushManager.getSubscription()
-          .then(function (subscription) {})
+          .then(function (subscription) {
+            if (isPushEnabled && useNotifications) {}
+          })
       })
     }).catch(function (e) {
       console.error('Error during service worker registration:', e)
