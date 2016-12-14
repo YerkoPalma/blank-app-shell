@@ -1,7 +1,7 @@
 /* eslint-env serviceworker */
 /* global fetch URL Request */
 
-var version = '0.0.2'
+var version = '0.0.3'
 var cacheName = 'appshell-sw-v' + version
 
 var filesToCache = [
@@ -80,7 +80,7 @@ self.addEventListener('activate', function (e) {
   console.log('[ServiceWorker] Activate')
   var setOfExpectedUrls = new Set(absoluteUrlsExpected)
   e.waitUntil(
-    caches.open(cacheName).then(function(cache) {
+    caches.open(cacheName).then(function (cache) {
       return caches.keys().then(function (existingRequests) {
         return Promise.all(
           existingRequests.map(function (existingRequest) {
