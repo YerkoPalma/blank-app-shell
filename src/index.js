@@ -19,7 +19,7 @@ document.body.insertBefore(sidenav, newHeader)
 if ('serviceWorker' in navigator) {
   console.log(`env: ${process.env.NODE_ENV}`)
   if (process.env.NODE_ENV === 'production') {
-    navigator.serviceWorker.register(window.location.origin + 'service-worker.js').then(function (reg) {
+    navigator.serviceWorker.register(window.location.origin + '/service-worker.js').then(function (reg) {
       reg.onupdatefound = function () {
         var installingWorker = reg.installing
 
