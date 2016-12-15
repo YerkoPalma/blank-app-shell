@@ -20,6 +20,10 @@ export default yo`
         <i class="material-icons">info_outline</i> 
         <a href="#" data-route="/user/123" class="link f4 silver hover-dark-green self-center ml2">Profile</a>
       </li>
+      <li class='flex flex-row flex-wrap justify-start content-center items-center mv3'>
+        <i class="material-icons">info_outline</i> 
+        <a href="#" data-route="/counter" class="link f4 silver hover-dark-green self-center ml2">Counter</a>
+      </li>
     </ul>
   </aside>
   <div id='sidenav-panel' onclick=${(ev) => {

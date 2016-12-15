@@ -5,6 +5,7 @@ import RouterSingleton from './libs/Router'
 import HomeView from './views/home'
 import AboutView from './views/about'
 import UserView from './views/user'
+import CounterView from './views/counter'
 import { registerServiceWorker } from './utils'
 
 // render main content
@@ -22,5 +23,6 @@ const router = RouterSingleton.getRouter()
 router.addRoute('/', HomeView)
 router.addRoute('/about', AboutView)
 router.addRoute('/user/:id', UserView)
+router.addRoute('/counter', CounterView)
 router.setRoot('/')
 router.start('#app')
