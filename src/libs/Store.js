@@ -10,7 +10,7 @@
 
   var state = 0
   const store = createStore(state, reducers)
-  store.subscribe(() => console.log(store.getState()))
+  store.subscribe((pres, current) => console.log(store.getState()))
 
   store.dispatch('increment') // 1
   store dispatch('increment') // 2
@@ -22,8 +22,9 @@ export default function (state, reducers) {
   var currentState = state
   var prevState = null
   var currentListener
-
+  debugger
   function dispatch (action, data) {
+    debugger
     if (actions.indexOf(action) < 0) {
       throw new Error(`Action '${action}' not registered in reducer.`)
     }
