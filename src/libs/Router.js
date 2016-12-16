@@ -39,6 +39,7 @@ class Router {
   constructor () {
     this.routes = {}
     this.currentPath = null
+    this.previousPath = null
     this.currentRoute = null
     this.previousRoute = null
     this.root = null
@@ -46,6 +47,7 @@ class Router {
     this.store = null
 
     window.addEventListener('popstate', e => {
+      console.log(e.target)
       this.onPopState(e)
     })
 
@@ -99,6 +101,7 @@ class Router {
   }
 
   goToPath (path, title = null) {
+    this.previousPath = window.location.pathname
     // Only process real changes.
     if (path === window.location.pathname) {
       return
@@ -115,8 +118,10 @@ class Router {
   }
 
   manageState () {
+    console.log(`Managing ${this.currentPath}, previously ${this.previousPath}`)
+
+    if (this.currentPath === this.previousPath) return
     document.querySelector('main').innerHTML = this.currentRoute.onStart(this.store).outerHTML
-    debugger
     if (typeof this.currentRoute.cb === 'function') {
       try {
         this.currentRoute.cb()
@@ -127,6 +132,7 @@ class Router {
   }
 
   requestStateUpdate (e) {
+    this.previousPath = this.currentPath
     this.currentRoute = this.getRoute(e && e.target !== window
                                       ? e.target.getAttribute('data-route')
                                       : window.location.pathname)

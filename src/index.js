@@ -29,8 +29,16 @@ const reducers = {
 
 var state = 0
 const store = createStore(state, reducers)
-store.subscribe(() => {
+store.subscribe((prev, curr) => {
+  console.log(`prev = ${prev}; curr = ${curr}`)
   document.getElementById('count').textContent = store.getState()
+  if (store.getState() < 0) {
+    document.getElementById('count').classList.add('red')
+    document.getElementById('count').classList.remove('green')
+  } else {
+    document.getElementById('count').classList.add('green')
+    document.getElementById('count').classList.remove('red')
+  }
 })
 
 // start router

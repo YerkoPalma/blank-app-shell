@@ -22,9 +22,7 @@ export default function (state, reducers) {
   var currentState = state
   var prevState = null
   var currentListener
-  debugger
   function dispatch (action, data) {
-    debugger
     if (actions.indexOf(action) < 0) {
       throw new Error(`Action '${action}' not registered in reducer.`)
     }
