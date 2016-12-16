@@ -43,6 +43,7 @@ class Router {
     this.previousRoute = null
     this.root = null
     this.rootEl = null
+    this.store = null
 
     window.addEventListener('popstate', e => {
       this.onPopState(e)
@@ -65,8 +66,12 @@ class Router {
     })
   }
 
-  addRoute (pattern, view) {
-    this.routes[pattern] = new Route(pattern, view)
+  setStore (store) {
+    this.store = store
+  }
+
+  addRoute (pattern, view, cb) {
+    this.routes[pattern] = new Route(pattern, view, cb)
   }
 
   setRoot (path) {
@@ -110,7 +115,15 @@ class Router {
   }
 
   manageState () {
-    document.querySelector('main').innerHTML = this.currentRoute.onStart().outerHTML
+    document.querySelector('main').innerHTML = this.currentRoute.onStart(this.store).outerHTML
+    debugger
+    if (typeof this.currentRoute.cb === 'function') {
+      try {
+        this.currentRoute.cb()
+      } catch (ex) {
+        console.error(ex)
+      }
+    }
   }
 
   requestStateUpdate (e) {
@@ -125,8 +138,9 @@ class Router {
 }
 
 class Route {
-  constructor (pattern, view) {
+  constructor (pattern, view, cb) {
     this.pattern = pattern
+    this.cb = cb
     this._urlPattern = new UrlPattern(pattern)
     this.view = view
     this.params = null
@@ -143,9 +157,9 @@ class Route {
     this.params = this._urlPattern.match(this.path)
   }
 
-  onStart () {
+  onStart (store) {
     this.path = window.location.pathname
     this.params = this._urlPattern.match(this.path)
-    return this.view(this.params)
+    return this.view(this.params, store)
   }
 }

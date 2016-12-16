@@ -2,6 +2,7 @@ import header from './components/header'
 import sidenav from './components/sidenav'
 import yo from 'yo-yo'
 import RouterSingleton from './libs/Router'
+import createStore from './libs/Store'
 import HomeView from './views/home'
 import AboutView from './views/about'
 import UserView from './views/user'
@@ -17,12 +18,31 @@ document.body.insertBefore(sidenav, newHeader)
 registerServiceWorker('/service-worker.js')
 
 // Initial state
+const reducers = {
+  increment (state, data) {
+    return ++state
+  },
+  decrement (state, data) {
+    return --state
+  }
+}
+
+var state = 0
+const store = createStore(state, reducers)
+store.subscribe(() => {
+  document.getElementById('count').textContent = store.getState()
+})
 
 // start router
 const router = RouterSingleton.getRouter()
+router.setStore(store)
 router.addRoute('/', HomeView)
 router.addRoute('/about', AboutView)
 router.addRoute('/user/:id', UserView)
-router.addRoute('/counter', CounterView)
+router.addRoute('/counter', CounterView, () => {
+  document.getElementById('increment').addEventListener('click', e => store.dispatch('increment'))
+  document.getElementById('decrement').addEventListener('click', e => store.dispatch('decrement'))
+
+})
 router.setRoot('/')
 router.start('#app')

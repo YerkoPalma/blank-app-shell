@@ -31,7 +31,13 @@ export default function (state, reducers) {
     currentAction = action
     prevState = currentState
     currentState = reducers[currentAction](currentState, data)
-    if (typeof currentListener === 'function') currentListener(prevState, currentState)
+    if (typeof currentListener === 'function') {
+      try {
+        currentListener(prevState, currentState)
+      } catch (ex) {
+        console.log(ex)
+      }
+    }
   }
 
   function subscribe (listener) {
