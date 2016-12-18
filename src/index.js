@@ -30,7 +30,6 @@ const reducers = {
 var state = 0
 const store = createStore(state, reducers)
 store.subscribe((prev, curr) => {
-  console.log(`prev = ${prev}; curr = ${curr}`)
   document.getElementById('count').textContent = store.getState()
   if (store.getState() < 0) {
     document.getElementById('count').classList.add('red')
@@ -50,7 +49,6 @@ router.addRoute('/user/:id', UserView)
 router.addRoute('/counter', CounterView, () => {
   document.getElementById('increment').addEventListener('click', e => store.dispatch('increment'))
   document.getElementById('decrement').addEventListener('click', e => store.dispatch('decrement'))
-
 })
 router.setRoot('/')
 router.start('#app')

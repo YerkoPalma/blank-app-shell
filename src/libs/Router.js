@@ -47,7 +47,6 @@ class Router {
     this.store = null
 
     window.addEventListener('popstate', e => {
-      console.log(e.target)
       this.onPopState(e)
     })
 
@@ -77,12 +76,10 @@ class Router {
   }
 
   setRoot (path) {
-    console.log(`Setting root ${path}`)
     this.root = this.getRoute(path) || new Route('/', () => yo`<div></div>`)
   }
 
   start (selector) {
-    console.log(`Starting router on ${selector}`)
     this.rootEl = document.querySelector(selector) || document.body
     this.requestStateUpdate()
   }
@@ -133,6 +130,7 @@ class Router {
 
   requestStateUpdate (e) {
     this.previousPath = this.currentPath
+    this.currentPath = window.location.pathname
     this.currentRoute = this.getRoute(e && e.target !== window
                                       ? e.target.getAttribute('data-route')
                                       : window.location.pathname)
