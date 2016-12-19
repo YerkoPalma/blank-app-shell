@@ -7,7 +7,7 @@
   "scripts": {
     "test": "standard --verbose | snazzy && ava tests/*.js",
     "start": "budo src/index.js:dist/bundle.js --open --verbose --pushstate --host 0.0.0.0 --port 8080 -- -t es2040 -t rollupify",
-    "build": "mkdir -p dist/src && mkdir -p dist/dist && NODE_ENV=production browserify -e src/index.js -t es2040 -t rollupify -t yo-yoify -t envify > dist/dist/bundle.js && cp index.html src/service-worker.js dist/ && cp -r src/images/ dist/src/images",
+    "build": "mkdir -p dist/src && mkdir -p dist/dist && NODE_ENV=production browserify -e src/index.js -t es2040 -t rollupify -t yo-yoify -t envify > dist/dist/bundle.js && cp index.html manifest.json favicon.ico src/service-worker.js dist/ && cp -r src/images/ dist/src/images",
     "deploy-gh": "npm run build && gh-pages -d dist",
     "deploy-surge": "npm run build && cp dist/index.html dist/200.html && surge -p dist -d https://blank-app-shell.surge.sh"
   },
