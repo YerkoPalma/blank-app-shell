@@ -19,6 +19,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "idb-keyval": "^2.3.0",
     "url-pattern": "^1.0.3",
     "yo-yo": "^1.3.1"
   },
