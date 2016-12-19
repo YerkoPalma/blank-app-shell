@@ -44,7 +44,7 @@ export function slideLeft (el) {
     if (!start) start = timestamp
     var progress = timestamp - start
     el.style.left = +(initLeft - Math.min(progress, initWidth)) + 'px'
-    if (+el.style.left.match(/-?\d*/)[0] >= (initWidth * -1)) {
+    if (+el.style.left.match(/-?\d*/)[0] > (initWidth * -1)) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
       // after changing opacity, actually hide the element
     }
@@ -63,7 +63,7 @@ export function slideRight (el) {
     if (!start) start = timestamp
     var progress = timestamp - start
     el.style.left = +(initLeft + Math.min(progress, initWidth)) + 'px'
-    if (+el.style.left.match(/-?\d*/)[0] <= 0) {
+    if (+el.style.left.match(/-?\d*/)[0] < 0) {
       (window.requestAnimationFrame && window.requestAnimationFrame(tick)) || setTimeout(tick, 16)
       // after changing opacity, actually hide the element
     }
