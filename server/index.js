@@ -1,5 +1,6 @@
 import http from 'http'
 import fs from 'fs'
+import path from 'path'
 
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
@@ -16,17 +17,20 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => {
       body.push(chunk)
     })
-    // read from index.html
     req.on('end', () => {
-      console.log('req.end')
-      body = Buffer.concat(body).toString()
-
-      // respond with readed content
       res.on('error', err => {
         console.error(err)
       })
-      res.statusCode = 200
-      res.end('<html><body><h1>Hello, World!</h1></body></html>')
+      body = Buffer.concat(body).toString()
+      console.log('ready to read file')
+      // read from index.html
+      fs.readFile(path.resolve(__dirname, 'index.html'), 'utf8', (err, data) => {
+        if (err) console.error(err)
+        res.statusCode = 200
+        console.log('data readed')
+        // respond with readed content
+        res.end(data || body)
+      })
     })
   }
 })
