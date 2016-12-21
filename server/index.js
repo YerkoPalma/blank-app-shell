@@ -1,9 +1,7 @@
 import http from 'http'
-import fs from 'fs'
-import path from 'path'
-import StaticServer from './libs/StaticServer'
+import send from 'send'
+import parseUrl from 'parseurl'
 
-const app = StaticServer()
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
 const allowedRequests = [
@@ -21,90 +19,17 @@ const allowedRequests = [
   '/src/images/icon.png'
 ]
 
-app.get({
-  allowedRequests,
-  default: 'index.js',
-  expectFiles: true
-})
-
-const server = http.createServer(app)
-/*
 const server = http.createServer((req, res) => {
-  // read html content
-  console.log(req.method)
-  console.log(req.url)
-  let body = []
-
   if (req.method === 'GET') {
     if (allowedRequests.indexOf(req.url) > -1) {
-      req.on('error', err => {
-        // This prints the error message and stack trace to `stderr`.
-        console.error(err.stack)
-      })
-      req.on('data', chunk => {
-        body.push(chunk)
-      })
-      req.on('end', () => {
-        res.on('error', err => {
-          console.error(err)
-        })
-        body = Buffer.concat(body).toString()
-        console.log('ready to read file')
-        // read from index.html
-        fs.readFile(path.resolve(__dirname, req.url.slice(1)), 'utf8', (err, data) => {
-          if (err) console.error(err)
-          res.statusCode = 200
-          const extension = path.extname(req.url)
-          switch (extension) {
-            case '.js':
-              res.setHeader('Content-Type', 'application/javascript')
-              break
-            case '.png':
-              res.setHeader('Content-Type', 'image/png')
-              res.setHeader('cache-control', 'public, max-age=31536000, no-cache')
-              res.setHeader('accept-ranges', 'bytes')
-              break
-            case '.jpg':
-              res.setHeader('Content-Type', 'image/jpg')
-              break
-            case '.css':
-              res.setHeader('Content-Type', 'text/css')
-              break
-            default:
-              res.setHeader('Content-Type', 'text/html')
-          }
-          console.log('data readed')
-          // respond with readed content
-          res.end(data, 'utf8')
-        })
-      })
+      console.log(`Serving ${parseUrl(req).pathname}`)
+      send(req, parseUrl(req).pathname, { root: __dirname }).pipe(res)
     } else {
-      req.on('error', err => {
-        // This prints the error message and stack trace to `stderr`.
-        console.error(err.stack)
-      })
-      req.on('data', chunk => {
-        body.push(chunk)
-      })
-      req.on('end', () => {
-        res.on('error', err => {
-          console.error(err)
-        })
-        body = Buffer.concat(body).toString()
-        console.log('ready to read file')
-        // read from index.html
-        fs.readFile(path.resolve(__dirname, 'index.html'), 'utf8', (err, data) => {
-          if (err) console.error(err)
-          res.statusCode = 200
-          console.log('data readed')
-          // respond with readed content
-          res.end(data)
-        })
-      })
+      send(req, 'index.html').pipe(res)
     }
   }
 })
-*/
+
 server.listen(port, ip, () => {
   console.log(`Server running on ${ip}:${port}`)
 })
