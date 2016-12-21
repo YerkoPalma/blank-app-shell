@@ -15,7 +15,7 @@ var filesToCache = [
 var urlsToCache = [
   'https://unpkg.com/tachyons/css/tachyons.min.css',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
-  'https://fonts.gstatic.com/s/materialicons/v19/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2',
+  'https://fonts.gstatic.com/s/materialicons/v19/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2'
 ]
 
 // Returns an object with one property per file to cache, where the key is the
