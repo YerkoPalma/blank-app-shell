@@ -1,22 +1,40 @@
 import http from 'http'
 import fs from 'fs'
 import path from 'path'
+import StaticServer from './libs/StaticServer'
 
+const app = StaticServer()
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
+const allowedRequests = [
+  '/dist/bundle.js',
+  '/src/images/green-bg.png',
+  '/favicon.ico',
+  '/service-worker.js',
+  '/manifest.json',
+  '/src/images/icon-128.png',
+  '/src/images/icon-144.png',
+  '/src/images/icon-152.png',
+  '/src/images/icon-192.png',
+  '/src/images/icon-240.png',
+  '/src/images/icon-256.png',
+  '/src/images/icon.png'
+]
 
+app.get({
+  allowedRequests,
+  default: 'index.js',
+  expectFiles: true
+})
+
+const server = http.createServer(app)
+/*
 const server = http.createServer((req, res) => {
   // read html content
   console.log(req.method)
   console.log(req.url)
   let body = []
-  const allowedRequests = [
-    '/dist/bundle.js',
-    '/src/images/green-bg.png',
-    '/favicon.ico',
-    '/service-worker.js',
-    '/manifest.json'
-  ]
+
   if (req.method === 'GET') {
     if (allowedRequests.indexOf(req.url) > -1) {
       req.on('error', err => {
@@ -43,6 +61,8 @@ const server = http.createServer((req, res) => {
               break
             case '.png':
               res.setHeader('Content-Type', 'image/png')
+              res.setHeader('cache-control', 'public, max-age=31536000, no-cache')
+              res.setHeader('accept-ranges', 'bytes')
               break
             case '.jpg':
               res.setHeader('Content-Type', 'image/jpg')
@@ -50,10 +70,12 @@ const server = http.createServer((req, res) => {
             case '.css':
               res.setHeader('Content-Type', 'text/css')
               break
+            default:
+              res.setHeader('Content-Type', 'text/html')
           }
           console.log('data readed')
           // respond with readed content
-          res.end(data || body)
+          res.end(data, 'utf8')
         })
       })
     } else {
@@ -76,13 +98,13 @@ const server = http.createServer((req, res) => {
           res.statusCode = 200
           console.log('data readed')
           // respond with readed content
-          res.end(data || body)
+          res.end(data)
         })
       })
     }
   }
 })
-
+*/
 server.listen(port, ip, () => {
   console.log(`Server running on ${ip}:${port}`)
 })
