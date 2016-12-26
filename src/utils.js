@@ -82,6 +82,7 @@ export function registerServiceWorker (swPath) {
           installingWorker.onstatechange = function () {
             switch (installingWorker.state) {
               case 'installed':
+                registerForPushNotifications (reg)
                 if (navigator.serviceWorker.controller) {
                   console.log('New or updated content is available.')
                 } else {
@@ -94,57 +95,74 @@ export function registerServiceWorker (swPath) {
             }
           }
         }
-        // push notifications
-        if (!(reg.showNotification)) {
-          console.log('Notifications aren\'t supported on service workers.')
-          return
-        }
-
-        if (Notification.permission === 'denied') {
-          console.log('The user has blocked notifications.')
-          return
-        }
-
-        if (!('PushManager' in window)) {
-          console.log('Push messaging isn\'t supported.')
-          return
-        }
-
-        reg.pushManager.getSubscription()
-          .then(function (subscription) {
-            if (subscription) {
-              return subscription
-            }
-            return reg.pushManager.subscribe({ userVisibleOnly: true })
-          })
-      })
-      .then(function (subscription) {
-        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
-        const key = rawKey
-                    ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
-                    : ''
-        const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
-        const authSecret = rawAuthSecret
-                      ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
-                      : ''
-
-        const endpoint = subscription.endpoint
-        // send subscription
-        fetch('./register', {
-          method: 'post',
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: JSON.stringify({
-            endpoint,
-            key: key,
-            authSecret: authSecret
-          })
-        })
       })
       .catch(function (e) {
         console.error('Error during service worker registration:', e)
       })
     }
   }
+}
+
+function registerForPushNotifications (reg) {
+  // push notifications
+  if (!(reg.showNotification)) {
+    console.log('Notifications aren\'t supported on service workers.')
+    return
+  }
+
+  if (Notification.permission === 'denied') {
+    console.log('The user has blocked notifications.')
+    return
+  }
+
+  if (!('PushManager' in window)) {
+    console.log('Push messaging isn\'t supported.')
+    return
+  }
+
+  reg.pushManager.getSubscription()
+    .then(function (subscription) {
+      if (subscription) {
+        return subscription
+      }
+      reg.pushManager.subscribe({ userVisibleOnly: true })
+        .then(function (subscription) {
+          const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
+          const key = rawKey
+                      ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
+                      : ''
+          const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
+          const authSecret = rawAuthSecret
+                        ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
+                        : ''
+  
+          const endpoint = subscription.endpoint
+          console.log(JSON.stringify({
+            endpoint,
+            key: key,
+            authSecret: authSecret
+          }))
+          // send subscription
+          fetch('/register', {
+            method: 'post',
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+              endpoint,
+              key: key,
+              authSecret: authSecret
+            })
+          })
+          .catch(function (e) {
+            console.error('Error during service worker registration:', e)
+          })
+        })
+        .catch(function (e) {
+          console.error('Error during service worker registration:', e)
+        })
+    })
+    .catch(function (e) {
+      console.error('Error during service worker registration:', e)
+    })
 }

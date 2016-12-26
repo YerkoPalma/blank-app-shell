@@ -1,6 +1,8 @@
 import http from 'http'
 import send from 'send'
 import parseUrl from 'parseurl'
+import { GCM_API_KEY } from './env'
+import webPush from 'web-push'
 
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
@@ -20,13 +22,29 @@ const allowedRequests = [
 ]
 
 const server = http.createServer((req, res) => {
+  console.log(`${req.method} ${req.url} ${req.statusCode}`)
   if (req.method === 'GET') {
     if (allowedRequests.indexOf(req.url) > -1) {
-      console.log(`Serving ${parseUrl(req).pathname}`)
       send(req, parseUrl(req).pathname, { root: __dirname }).pipe(res)
     } else {
       send(req, 'index.html').pipe(res)
     }
+  } else if (req.method === 'POST' && req.url === '/register') {
+    console.log(`registering ${GCM_API_KEY}`)
+    webPush.setGCMAPIKey(GCM_API_KEY)
+    res.statusCode = 201
+    res.end()
+  } else if (req.method === 'POST' && req.url === '/send') {
+    webPush.sendNotification(req.body.endpoint, {
+      TTL: req.body.ttl,
+      payload: req.body.payload,
+      userPublicKey: req.body.key,
+      userAuth: req.body.authSecret
+    })
+    .then(function() {
+      res.statusCode = 201
+      res.end()
+    })
   }
 })
 

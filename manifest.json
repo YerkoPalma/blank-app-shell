@@ -30,5 +30,6 @@
     }],
   "display": "standalone",
   "background_color": "#9EEBCF",
-  "theme_color": "#19A974"
+  "theme_color": "#19A974",
+  "gcm_sender_id": "app-shell-153712"
 }
