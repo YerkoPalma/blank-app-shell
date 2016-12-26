@@ -122,23 +122,12 @@ self.addEventListener('fetch', function (e) {
 })
 
 // PUSH NOTIFICATIONS
-var port
 
 self.addEventListener('push', function (event) {
-  var obj = event.data.json()
+  const obj = event.data.json()
 
-  if (obj.action === 'subscribe' || obj.action === 'unsubscribe') {
-    fireNotification(obj, event)
-    port.postMessage(obj)
-  } else if (obj.action === 'init' || obj.action === 'chatMsg') {
-    port.postMessage(obj)
-  }
+  fireNotification(obj, event)
 })
-
-self.onmessage = function (e) {
-  console.log(e)
-  port = e.ports[0]
-}
 
 function fireNotification (obj, event) {
   var title = 'Subscription change'

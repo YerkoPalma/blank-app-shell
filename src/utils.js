@@ -1,4 +1,4 @@
-/* global navigator Notification */
+/* global navigator Notification fetch */
 export function fadeIn (el) {
   el.style.opacity = 0
   el.style.display = 'block'
@@ -73,9 +73,6 @@ export function slideRight (el) {
 }
 
 export function registerServiceWorker (swPath) {
-  var isPushEnabled = false
-  var useNotifications = false
-
   if ('serviceWorker' in navigator) {
     if (process.env.NODE_ENV === 'production') {
       navigator.serviceWorker.register(window.location.origin + swPath).then(function (reg) {
@@ -100,26 +97,52 @@ export function registerServiceWorker (swPath) {
         // push notifications
         if (!(reg.showNotification)) {
           console.log('Notifications aren\'t supported on service workers.')
-          useNotifications = false
-        } else {
-          useNotifications = true
+          return
         }
 
         if (Notification.permission === 'denied') {
           console.log('The user has blocked notifications.')
+          return
         }
 
         if (!('PushManager' in window)) {
           console.log('Push messaging isn\'t supported.')
+          return
         }
 
-        navigator.serviceWorker.ready.then(function (reg) {
-          reg.pushManager.getSubscription()
-            .then(function (subscription) {
-              if (isPushEnabled && useNotifications) {}
-            })
+        reg.pushManager.getSubscription()
+          .then(function (subscription) {
+            if (subscription) {
+              return subscription
+            }
+            return reg.pushManager.subscribe({ userVisibleOnly: true })
+          })
+      })
+      .then(function (subscription) {
+        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
+        const key = rawKey
+                    ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
+                    : ''
+        const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
+        const authSecret = rawAuthSecret
+                      ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
+                      : ''
+
+        const endpoint = subscription.endpoint
+        // send subscription
+        fetch('./register', {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            endpoint,
+            key: key,
+            authSecret: authSecret
+          })
         })
-      }).catch(function (e) {
+      })
+      .catch(function (e) {
         console.error('Error during service worker registration:', e)
       })
     }
