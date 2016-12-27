@@ -1,9 +1,10 @@
 import http from 'http'
 import send from 'send'
 import parseUrl from 'parseurl'
-import { GCM_API_KEY } from './env'
+// import { GCM_API_KEY } from './env'
 import webPush from 'web-push'
 
+const GCM_API_KEY = process.env.GCM_API_KEY || require('./env').GCM_API_KEY
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
 const allowedRequests = [
@@ -41,7 +42,7 @@ const server = http.createServer((req, res) => {
       userPublicKey: req.body.key,
       userAuth: req.body.authSecret
     })
-    .then(function() {
+    .then(function () {
       res.statusCode = 201
       res.end()
     })

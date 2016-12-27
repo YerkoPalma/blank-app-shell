@@ -9,11 +9,11 @@
     "start": "node dist/server.js",
     "start-client": "budo src/index.js:dist/bundle.js --open --verbose --pushstate --host 0.0.0.0 --port 8080 -- -t es2040 -t rollupify",
     "build": "npm run build-client && npm run build-server",
-    "build-client": "mkdir -p dist/src && mkdir -p dist/dist && NODE_ENV=production browserify -e src/index.js -t es2040 -t rollupify -t yo-yoify -t envify > dist/dist/bundle.js && cp index.html server/env.js manifest.json favicon.ico src/service-worker.js dist/ && cp -r src/images/ dist/src/images",
-    "build-server": "rollup server/index.js --output dist/server.js --format cjs",
+    "build-client": "mkdir -p dist/src && mkdir -p dist/dist && NODE_ENV=production browserify -e src/index.js -t es2040 -t rollupify -t yo-yoify -t envify > dist/dist/bundle.js && cp index.html manifest.json favicon.ico src/service-worker.js dist/ && cp -r src/images/ dist/src/images",
+    "build-server": "rollup server/index.js --output dist/server.js --format cjs && rollup server/env.js --output dist/env.js --format cjs",
     "deploy-gh": "npm run build && gh-pages -d dist",
     "deploy-surge": "npm run build && cp dist/index.html dist/200.html && surge -p dist -d https://blank-app-shell.surge.sh",
-    "deploy-now": "now"
+    "deploy-now": "now -e GCM_API_KEY=@gcm_api_key"
   },
   "keywords": [
     "appshell",
@@ -36,9 +36,9 @@
     "budo": "^9.2.2",
     "envify": "^4.0.0",
     "es2040": "^1.2.4",
-    "now": "^0.37.0",
-    "rollup": "^0.37.0",
-    "rollupify": "^0.3.5",
+    "now": "^0.37.1",
+    "rollup": "^0.38.0",
+    "rollupify": "^0.3.7",
     "snazzy": "^5.0.0",
     "standard": "^8.6.0",
     "surge": "^0.18.0",

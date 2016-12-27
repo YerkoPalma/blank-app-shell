@@ -1,7 +1,7 @@
 /* eslint-env serviceworker */
 /* global fetch URL Request */
 
-var version = '0.1.3'
+var version = '0.1.6'
 var cacheName = 'appshell-sw-v' + version
 
 var filesToCache = [
@@ -57,10 +57,10 @@ var cachedUrls = function (cache) {
 }
 
 self.addEventListener('install', function (e) {
-  console.log('[ServiceWorker] Install')
+  // console.log('[ServiceWorker] Install')
   e.waitUntil(
     caches.open(cacheName).then(function (cache) {
-      console.log('[ServiceWorker] Caching app shell')
+      // console.log('[ServiceWorker] Caching app shell')
       return cachedUrls(cache).then(function (urls) {
         return Promise.all(
           absoluteUrlsExpected.map(function (expectedUrl) {
@@ -78,7 +78,7 @@ self.addEventListener('install', function (e) {
 })
 
 self.addEventListener('activate', function (e) {
-  console.log('[ServiceWorker] Activate')
+  // console.log('[ServiceWorker] Activate')
   var setOfExpectedUrls = new Set(absoluteUrlsExpected)
   e.waitUntil(
     caches.open(cacheName).then(function (cache) {
@@ -86,7 +86,7 @@ self.addEventListener('activate', function (e) {
         return Promise.all(
           existingRequests.map(function (existingRequest) {
             if (!setOfExpectedUrls.has(existingRequest.url)) {
-              console.log('[ServiceWorker] Removing old cache', existingRequest.url)
+              // console.log('[ServiceWorker] Removing old cache', existingRequest.url)
               return cache.delete(existingRequest)
             }
           })
@@ -100,7 +100,7 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('fetch', function (e) {
   if (e.request.method === 'GET') {
-    console.log('[ServiceWorker] Fetch', e.request.url)
+    // console.log('[ServiceWorker] Fetch', e.request.url)
     // var dataUrl = 'https://sw-test-43ffd.firebaseio.com/'
     // if (e.request.url.indexOf(dataUrl) === 0) {
     e.respondWith(

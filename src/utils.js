@@ -73,6 +73,8 @@ export function slideRight (el) {
 }
 
 export function registerServiceWorker (swPath) {
+  Notification.requestPermission()
+
   if ('serviceWorker' in navigator) {
     if (process.env.NODE_ENV === 'production') {
       navigator.serviceWorker.register(window.location.origin + swPath).then(function (reg) {
@@ -82,7 +84,6 @@ export function registerServiceWorker (swPath) {
           installingWorker.onstatechange = function () {
             switch (installingWorker.state) {
               case 'installed':
-                registerForPushNotifications (reg)
                 if (navigator.serviceWorker.controller) {
                   console.log('New or updated content is available.')
                 } else {
@@ -98,6 +99,12 @@ export function registerServiceWorker (swPath) {
       })
       .catch(function (e) {
         console.error('Error during service worker registration:', e)
+      })
+      navigator.serviceWorker.ready.then(reg => {
+        return registerForPushNotifications(reg)
+      })
+      .catch(function (e) {
+        console.error('Error during push registration:', e)
       })
     }
   }
@@ -120,49 +127,47 @@ function registerForPushNotifications (reg) {
     return
   }
 
-  reg.pushManager.getSubscription()
+  return reg.pushManager.getSubscription()
     .then(function (subscription) {
+      console.log(`Subscription: ${subscription}`)
       if (subscription) {
         return subscription
       }
-      reg.pushManager.subscribe({ userVisibleOnly: true })
-        .then(function (subscription) {
-          const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
-          const key = rawKey
-                      ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
-                      : ''
-          const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
-          const authSecret = rawAuthSecret
-                        ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
-                        : ''
-  
-          const endpoint = subscription.endpoint
-          console.log(JSON.stringify({
-            endpoint,
-            key: key,
-            authSecret: authSecret
-          }))
-          // send subscription
-          fetch('/register', {
-            method: 'post',
-            headers: {
-              'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-              endpoint,
-              key: key,
-              authSecret: authSecret
-            })
-          })
-          .catch(function (e) {
-            console.error('Error during service worker registration:', e)
-          })
+      return reg.pushManager.subscribe({ userVisibleOnly: true })
+    })
+    .then(function (subscription) {
+      const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
+      const key = rawKey
+                  ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
+                  : ''
+      const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
+      const authSecret = rawAuthSecret
+                    ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
+                    : ''
+
+      const endpoint = subscription.endpoint
+      console.log(JSON.stringify({
+        endpoint,
+        key: key,
+        authSecret: authSecret
+      }))
+      // send subscription
+      fetch('/register', {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          endpoint,
+          key: key,
+          authSecret: authSecret
         })
-        .catch(function (e) {
-          console.error('Error during service worker registration:', e)
-        })
+      })
+      .catch(function (e) {
+        console.error('Error fetching register route:', e)
+      })
     })
     .catch(function (e) {
-      console.error('Error during service worker registration:', e)
+      console.error('Error getting push subscription:', e)
     })
 }
