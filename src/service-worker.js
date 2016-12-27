@@ -1,7 +1,7 @@
 /* eslint-env serviceworker */
 /* global fetch URL Request */
 
-var version = '0.1.13'
+var version = '0.1.15'
 var cacheName = 'appshell-sw-v' + version
 
 var filesToCache = [
