@@ -118,7 +118,9 @@ class Router {
     console.log(`Managing ${this.currentPath}, previously ${this.previousPath}`)
 
     if (this.currentPath === this.previousPath) return
-    document.querySelector('main').innerHTML = this.currentRoute.onStart(this.store).outerHTML
+    // document.querySelector('main').innerHTML = this.currentRoute.onStart(this.store).outerHTML
+    const child = document.querySelector('main').firstChild
+    document.querySelector('main').replaceChild(this.currentRoute.onStart(this.store), child)
     if (typeof this.currentRoute.cb === 'function') {
       try {
         this.currentRoute.cb()
