@@ -46,13 +46,15 @@ idbKeyval.get('state').then(val => {
   state = val || state
   const store = createStore(state, reducers)
   store.subscribe((prev, curr) => {
-    if (document.getElementById('count')) document.getElementById('count').textContent = store.getState().counter
-    if (store.getState().counter < 0) {
-      document.getElementById('count').classList.add('red')
-      document.getElementById('count').classList.remove('green')
-    } else {
-      document.getElementById('count').classList.add('green')
-      document.getElementById('count').classList.remove('red')
+    if (document.getElementById('count')) {
+      document.getElementById('count').textContent = store.getState().counter
+      if (store.getState().counter < 0) {
+        document.getElementById('count').classList.add('red')
+        document.getElementById('count').classList.remove('green')
+      } else {
+        document.getElementById('count').classList.add('green')
+        document.getElementById('count').classList.remove('red')
+      }
     }
     idbKeyval.set('state', store.getState()).then(() => {
       console.log(`saved ${JSON.stringify(store.getState(), null, 2)}`)

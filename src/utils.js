@@ -160,8 +160,8 @@ export function subscribeForPushNotifications (store) {
           },
           body: JSON.stringify({
             endpoint,
-            key: key,
-            authSecret: authSecret
+            key,
+            authSecret
           })
         })
         .catch(function (e) {

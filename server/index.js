@@ -1,10 +1,12 @@
 import http from 'http'
 import send from 'send'
 import parseUrl from 'parseurl'
-// import { GCM_API_KEY } from './env'
 import webPush from 'web-push'
-
+import memdb from 'memdb'
+const db = memdb()
 const GCM_API_KEY = process.env.GCM_API_KEY || require('./env').GCM_API_KEY
+// register for push notifications
+webPush.setGCMAPIKey(GCM_API_KEY)
 const ip = process.env.IP || '0.0.0.0'
 const port = process.env.PORT || 8080
 const allowedRequests = [
@@ -31,20 +33,48 @@ const server = http.createServer((req, res) => {
       send(req, 'index.html').pipe(res)
     }
   } else if (req.method === 'POST' && req.url === '/register') {
-    console.log(`registering ${GCM_API_KEY}`)
-    webPush.setGCMAPIKey(GCM_API_KEY)
-    res.statusCode = 201
-    res.end()
-  } else if (req.method === 'POST' && req.url === '/send') {
-    webPush.sendNotification(req.body.endpoint, {
-      TTL: req.body.ttl,
-      payload: req.body.payload,
-      userPublicKey: req.body.key,
-      userAuth: req.body.authSecret
+    let body = []
+    req.on('data', chunk => {
+      body.push(chunk)
     })
-    .then(function () {
+    req.on('end', () => {
+      body = JSON.parse(Buffer.concat(body).toString())
+      const key = body.key
+      db.put(key, body)
       res.statusCode = 201
       res.end()
+    })
+  } else if (req.method === 'POST' && req.url === '/send') {
+    let body = []
+    req.on('data', chunk => {
+      body.push(chunk)
+    })
+    req.on('end', () => {
+      body = JSON.parse(Buffer.concat(body).toString())
+      console.log('Request details')
+      const subscription = {
+        endpoint: body.endpoint,
+        keys: {
+          p256dh: body.key,
+          auth: body.authSecret
+        }
+      }
+      const payload = JSON.stringify({
+        payload: body.payload,
+        userPublicKey: body.key,
+        userAuth: body.authSecret
+      })
+      webPush.sendNotification(subscription, payload)
+      .then(() => {
+        console.log('cool')
+        res.statusCode = 201
+        res.end()
+      })
+      .catch((data) => {
+        console.log(JSON.stringify(data, null, 2))
+        res.statusCode = 500
+        res.end(data.body)
+      })
     })
   }
 })

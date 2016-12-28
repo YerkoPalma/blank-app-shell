@@ -1,7 +1,7 @@
 /* eslint-env serviceworker */
 /* global fetch URL Request */
 
-var version = '0.1.16'
+var version = '0.2.2'
 var cacheName = 'appshell-sw-v' + version
 
 var filesToCache = [
@@ -125,19 +125,21 @@ self.addEventListener('fetch', function (e) {
 
 self.addEventListener('push', function (event) {
   const obj = event.data.json()
-
+  console.log('[ServiceWorker] receive for push' + JSON.stringify(obj, null, 2))
   fireNotification(obj, event)
 })
 
 function fireNotification (obj, event) {
   var title = 'Subscription change'
   var body = obj.name + ' has ' + obj.action + 'd.'
-  var icon = 'push-icon.png'
   var tag = 'push'
 
-  event.waitUntil(self.registration.showNotification(title, {
-    body: body,
-    icon: icon,
-    tag: tag
-  }))
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      tag: tag
+    })
+    .then(() => { console.log('success') })
+    .catch(err => console.error('[ServiceWorker] Failed push', err))
+  ).catch(err => console.error('[ServiceWorker] Failed push', err))
 }
