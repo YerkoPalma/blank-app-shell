@@ -94,6 +94,20 @@ export function registerServiceWorker (swPath) {
             }
           }
         }
+        // check notification support
+        if (!(reg.showNotification)) {
+          console.log('Notifications aren\'t supported on service workers.')
+          // mark as unsuported
+        }
+        reg.pushManager.getSubscription()
+          .then(subscription => {
+            if (!subscription) {
+              console.log('Not yet subscribed to Push')
+              // We aren't subscribed to push, so set UI
+              // to allow the user to enable push
+              return
+            }
+          })
       })
       .catch(function (e) {
         console.error('Error during service worker registration:', e)
@@ -102,66 +116,71 @@ export function registerServiceWorker (swPath) {
   }
 }
 
-export function subscribeForPushNotifications (reg) {
-  // push notifications
-  if (!(reg.showNotification)) {
-    console.log('Notifications aren\'t supported on service workers.')
+export function subscribeForPushNotifications (store) {
+  // check if push messages are supported
+  if (!('PushManager' in window)) {
+    console.log('Push messaging isn\'t supported.')
     return
   }
-
+  // check user permission
   if (Notification.permission === 'denied') {
     console.log('The user has blocked notifications.')
     return
   } else if (Notification.permission !== 'granted') {
     Notification.requestPermission()
-  }
-
-  if (!('PushManager' in window)) {
-    console.log('Push messaging isn\'t supported.')
+    console.log('Notification permission not granted yet, asking')
     return
   }
-
-  return reg.pushManager.getSubscription()
-    .then(function (subscription) {
-      console.log(`Subscription: ${subscription}`)
-      if (subscription) {
-        return subscription
-      }
-      return reg.pushManager.subscribe({ userVisibleOnly: true })
-    })
-    .then(function (subscription) {
-      const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
-      const key = rawKey
-                  ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
-                  : ''
-      const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
-      const authSecret = rawAuthSecret
-                    ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
+  // when the service worker is installed and active
+  navigator.serviceWorker.ready.then(reg => {
+    // subscribe!
+    reg.pushManager.subscribe({ userVisibleOnly: true })
+      .then(subscription => {
+        store.dispatch('enablePush')
+        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : ''
+        const key = rawKey
+                    ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))
                     : ''
+        const rawAuthSecret = subscription.getKey ? subscription.getKey('auth') : ''
+        const authSecret = rawAuthSecret
+                      ? window.btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))
+                      : ''
 
-      const endpoint = subscription.endpoint
-      console.log(JSON.stringify({
-        endpoint,
-        key: key,
-        authSecret: authSecret
-      }))
-      // send subscription
-      fetch('/register', {
-        method: 'post',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
+        const endpoint = subscription.endpoint
+        console.log(JSON.stringify({
           endpoint,
           key: key,
           authSecret: authSecret
+        }))
+        // send subscription
+        fetch('/register', {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            endpoint,
+            key: key,
+            authSecret: authSecret
+          })
+        })
+        .catch(function (e) {
+          console.error('Error fetching register route:', e)
         })
       })
-      .catch(function (e) {
-        console.error('Error fetching register route:', e)
+      .catch(e => {
+        if (Notification.permission === 'denied') {
+          // The user denied the notification permission which
+          // means we failed to subscribe and the user will need
+          // to manually change the notification permission to
+          // subscribe to push messages
+          console.log('Permission for Notifications was denied')
+        } else {
+          // A problem occurred with the subscription, this can
+          // often be down to an issue or lack of the gcm_sender_id
+          // and / or gcm_user_visible_only
+          console.log('Unable to subscribe to push.', e)
+        }
       })
-    })
-    .catch(function (e) {
-      console.error('Error getting push subscription:', e)
-    })
+  })
 }

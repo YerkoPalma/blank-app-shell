@@ -11,7 +11,7 @@ export default (fn) => {
     first.classList.toggle('left--1')
     last.classList.toggle('bg-moon-gray')
     last.classList.toggle('bg-light-blue')
-    if (typeof fn === 'function') fn(ev)
+    if (typeof fn === 'function') fn()
   }} class="relative pointer">
     <span class="js-first bg-near-white w1 br-100 h1 shadow-1 z-1 pa1 left--1 absolute" style="transition: all 400ms ease-in-out"></span>
     <input class="dn" type="checkbox" />

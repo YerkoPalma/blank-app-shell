@@ -46,7 +46,7 @@ idbKeyval.get('state').then(val => {
   state = val || state
   const store = createStore(state, reducers)
   store.subscribe((prev, curr) => {
-    document.getElementById('count').textContent = store.getState().counter
+    if (document.getElementById('count')) document.getElementById('count').textContent = store.getState().counter
     if (store.getState().counter < 0) {
       document.getElementById('count').classList.add('red')
       document.getElementById('count').classList.remove('green')
@@ -55,7 +55,7 @@ idbKeyval.get('state').then(val => {
       document.getElementById('count').classList.remove('red')
     }
     idbKeyval.set('state', store.getState()).then(() => {
-      console.log(`saved ${store.getState()}`)
+      console.log(`saved ${JSON.stringify(store.getState(), null, 2)}`)
     }).catch(err => console.error(err))
   })
 
