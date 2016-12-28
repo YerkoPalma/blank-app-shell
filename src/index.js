@@ -21,20 +21,33 @@ registerServiceWorker('/service-worker.js')
 // Initial state
 const reducers = {
   increment (state, data) {
-    return ++state
+    state.counter++
+    return state
   },
   decrement (state, data) {
-    return --state
+    state.counter--
+    return state
+  },
+  enablePush (state, data) {
+    state.isPushEnabled = true
+    return state
+  },
+  disblePush (state, data) {
+    state.isPushEnabled = false
+    return state
   }
 }
 
-var state = 0
+var state = {
+  isPushEnabled: false,
+  counter: 0
+}
 idbKeyval.get('state').then(val => {
   state = val || state
   const store = createStore(state, reducers)
   store.subscribe((prev, curr) => {
-    document.getElementById('count').textContent = store.getState()
-    if (store.getState() < 0) {
+    document.getElementById('count').textContent = store.getState().counter
+    if (store.getState().counter < 0) {
       document.getElementById('count').classList.add('red')
       document.getElementById('count').classList.remove('green')
     } else {

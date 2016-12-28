@@ -73,8 +73,6 @@ export function slideRight (el) {
 }
 
 export function registerServiceWorker (swPath) {
-  Notification.requestPermission()
-
   if ('serviceWorker' in navigator) {
     if (process.env.NODE_ENV === 'production') {
       navigator.serviceWorker.register(window.location.origin + swPath).then(function (reg) {
@@ -100,17 +98,11 @@ export function registerServiceWorker (swPath) {
       .catch(function (e) {
         console.error('Error during service worker registration:', e)
       })
-      navigator.serviceWorker.ready.then(reg => {
-        return registerForPushNotifications(reg)
-      })
-      .catch(function (e) {
-        console.error('Error during push registration:', e)
-      })
     }
   }
 }
 
-function registerForPushNotifications (reg) {
+export function subscribeForPushNotifications (reg) {
   // push notifications
   if (!(reg.showNotification)) {
     console.log('Notifications aren\'t supported on service workers.')
@@ -120,6 +112,8 @@ function registerForPushNotifications (reg) {
   if (Notification.permission === 'denied') {
     console.log('The user has blocked notifications.')
     return
+  } else if (Notification.permission !== 'granted') {
+    Notification.requestPermission()
   }
 
   if (!('PushManager' in window)) {
