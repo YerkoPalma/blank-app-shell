@@ -1,7 +1,7 @@
 import header from './components/header'
 import sidenav from './components/sidenav'
 import yo from 'yo-yo'
-import RouterSingleton from './libs/Router'
+import RouterSingleton from 'singleton-router'
 import createStore from './libs/Store'
 import idbKeyval from 'idb-keyval'
 import HomeView from './views/home'
@@ -62,7 +62,7 @@ idbKeyval.get('state').then(val => {
   })
 
   // start router
-  const router = RouterSingleton.getRouter()
+  const router = RouterSingleton()
   router.setStore(store)
   router.addRoute('/', HomeView)
   router.addRoute('/about', AboutView)
