@@ -2,39 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>App Shell</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="author" content="Yerko Palma" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="favicon.ico"/>
-    <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <meta name="author" content="Yerko" />
-    <link rel="manifest" href="/manifest.json">
-    <!-- Add to home screen for Safari on iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Blank app shell">
-    <link rel="apple-touch-icon" href="src/images/icon-152.png">
-    <!-- Add Tile Icon for Windows -->
-    <meta name="msapplication-TileImage" content="src/images/icon-144.png">
-    <meta name="msapplication-TileColor" content="#9EEBCF">
   </head>
   <body>
-    <header id='header' class='bg-dark-green ph5 pt5 pb3 relative shadow-3'>
-    </header>
-    <main role="main" class="center mv3 w-90 shadow-1 bg-light-gray">
-      <div id="app">
-      </div>
-    </main>
-    <script type="text/javascript">
-      (function () {
-        var scriptSrc = window.location.origin + '/dist/bundle.js'
-        var scriptTag = document.createElement('script')
-        var self = document.getElementsByTagName('script')[0]
-        scriptTag.async = 1
-        scriptTag.src = scriptSrc
-        self.parentNode.insertBefore(scriptTag, self)
-      })()
-    </script>
+    <main></main>
   </body>
 </html>
