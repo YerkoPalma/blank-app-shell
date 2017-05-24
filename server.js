@@ -22,7 +22,7 @@ function handler (req, res) {
   if (url === '/') {
     var htmlStream = fs.createReadStream(path.resolve(__dirname, 'index.html'))
     var navStream = hyperstream({
-      'main': fromString(nav.toString())
+      'header': fromString(nav.toString())
     })
     htmlStream.pipe(navStream).pipe(res)
   } else if (url === '/bundle.js') {
