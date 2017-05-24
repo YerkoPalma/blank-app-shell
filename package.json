@@ -25,5 +25,8 @@
     "singleton-router": "^2.0.0",
     "tachyons": "^4.7.4"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "snazzy": "^7.0.0",
+    "standard": "^10.0.2"
+  }
 }

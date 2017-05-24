@@ -20,7 +20,7 @@ server.listen(port, ip, onlisten)
 function handler (req, res) {
   var url = req.url
   if (url === '/') {
-    var htmlStream = fs.createReadStream(__dirname + '/index.html')
+    var htmlStream = fs.createReadStream(path.resolve(__dirname, 'index.html'))
     var navStream = hyperstream({
       'main': fromString(nav.toString())
     })
