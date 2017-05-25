@@ -18,6 +18,7 @@ router.start('main')
 
 var timeInterval = null
 
+// direct update, without using the store observer
 function timer () {
   if (timeInterval) clearInterval(timeInterval)
   var timeSpan = document.getElementById('time')
@@ -27,6 +28,7 @@ function timer () {
   }
 }
 
+// update through the store state (recommended)
 function render (prev, curr) {
   var _prev = router.rootEl.lasttElementChild || router.rootEl.lastChild
   var _curr = router.currentRoute.onStart(store)
