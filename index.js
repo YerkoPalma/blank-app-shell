@@ -5,8 +5,14 @@ var css = require('sheetify')
 var nanomorph = require('nanomorph')
 
 css('tachyons')
+var log
 
-var router = Router()
+if (process.env.NODE_ENV !== 'production') {
+  var Log = require('nanologger')
+  log = Log('pwa')
+}
+
+var router = Router({ onRender: renderRoute })
 var store = createStore(reducer)
 store.subscribe(render)
 
@@ -24,7 +30,8 @@ function timer () {
   var timeSpan = document.getElementById('time')
   setInterval(updateTime, 1000)
   function updateTime () {
-    timeSpan.innerHTML = new Date()
+    if (timeSpan) timeSpan.innerHTML = new Date()
+    else timeSpan = document.getElementById('time')
   }
 }
 
@@ -33,4 +40,20 @@ function render (prev, curr) {
   var _prev = router.rootEl.lasttElementChild || router.rootEl.lastChild
   var _curr = router.currentRoute.onStart(store)
   nanomorph(_prev, _curr)
+  log && log.info('re-rendered with state: ' + store.getState())
+}
+
+function renderRoute (prev, curr, cb) {
+  if (router.firstRender) {
+    router.firstRender = false
+    router.rootEl.appendChild(curr)
+    log && log.info('first render')
+  } else {
+    nanomorph(curr, prev)
+    log && log.info('render route for ' + window.location.pathname)
+  }
+  if (cb && typeof cb === 'function') {
+    cb()
+    log && log.info('callback for route ' + window.location.pathname)
+  }
 }
