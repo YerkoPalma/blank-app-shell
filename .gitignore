@@ -2,3 +2,5 @@ node_modules/
 dist/
 server/env.js
 *.log
+bundle.*
+service-worker.js
