@@ -31,7 +31,7 @@ function handler (req, res) {
   } else if (req.headers['accept'].indexOf('html') > 0) {
     console.log('html:', url)
     serveHtml(res, index)
-  } else if (staticAsset.test(url)) {
+  } else if (url === '/service-worker.js' || staticAsset.test(url)) {
     console.log('static:', url)
     assets.static(req).pipe(res)
   } else {

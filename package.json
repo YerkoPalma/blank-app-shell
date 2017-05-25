@@ -9,7 +9,8 @@
     "test": "standard --verbose | snazzy",
     "start": "node server.js",
     "build": "NODE_ENV=production bankai build --js [ --transform unassertify envify ] index.js . && npm run sw && cp index.dev.html index.html",
-    "sw": "sw-precache --config=sw-config.js --verbose"
+    "sw": "sw-precache --config=sw-config.js --verbose",
+    "deploy": "now --public -e NODE_ENV=production"
   },
   "keywords": [
     "appshell",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "envify": "^4.0.0",
     "nanologger": "^1.1.0",
+    "now": "^6.1.1",
     "snazzy": "^7.0.0",
     "standard": "^10.0.2",
     "unassertify": "^2.0.4"

@@ -4,3 +4,4 @@ server/env.js
 *.log
 bundle.*
 service-worker.js
+index.html
