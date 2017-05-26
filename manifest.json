@@ -1,35 +1,19 @@
 {
-  "name": "Blank app shell",
-  "short_name": "Blank app shell",
-  "start_url": "/index.html",
-  "description": "Starter point of every pwa",
-  "icons": [{
-    "src": "src/images/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    }, {
-      "src": "src/images/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    }, {
-      "src": "src/images/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png"
-    }, {
-      "src": "src/images/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }, {
-      "src": "src/images/icon-240.png",
-      "sizes": "240x240",
-      "type": "image/png"
-    }, {
-      "src": "src/images/icon-256.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    }],
+  "name": "PWA Demo",
+  "short_name": "PWA Demo",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#9EEBCF",
-  "theme_color": "#19A974",
-  "gcm_sender_id": "626153532195"
+  "orientation": "portrait",
+  "background_color": "#fff",
+  "theme_color": "#180101",
+  "icons": [{
+    "src": "/assets/icons/icon-170x170.png",
+    "type": "image/png",
+    "sizes": "170x170"
+  },
+  {
+    "src": "/assets/icons/icon-512x512.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }]
 }

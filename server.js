@@ -31,7 +31,7 @@ function handler (req, res) {
   } else if (req.headers['accept'].indexOf('html') > 0) {
     console.log('html:', url)
     serveHtml(res, index)
-  } else if (url === '/service-worker.js' || staticAsset.test(url)) {
+  } else if (url === '/service-worker.js' || url === '/manifest.json' || staticAsset.test(url)) {
     console.log('static:', url)
     assets.static(req).pipe(res)
   } else {
@@ -42,10 +42,10 @@ function handler (req, res) {
 
 function serveHtml (res, html) {
   htmlStream = fs.createReadStream(path.resolve(__dirname, html))
-    navStream = hyperstream({
-      'header': fromString(nav.toString())
-    })
-    htmlStream.pipe(navStream).pipe(res)
+  navStream = hyperstream({
+    'header': fromString(nav.toString())
+  })
+  htmlStream.pipe(navStream).pipe(res)
 }
 
 function onlisten () {

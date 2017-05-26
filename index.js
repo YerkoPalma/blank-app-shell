@@ -65,7 +65,7 @@ function registerServiceWorker (file) {
     window.navigator.serviceWorker.register(file).then(function (reg) {
       reg.onupdatefound = function () {
         var installingWorker = reg.installing
-  
+
         installingWorker.onstatechange = function () {
           switch (installingWorker.state) {
             case 'installed':
