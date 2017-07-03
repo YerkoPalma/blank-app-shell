@@ -18,13 +18,10 @@ server.listen(port, ip, onlisten)
 
 function handler (req, res) {
   var url = req.url
+  var index = process.env.NODE_ENV !== 'production' ? 'index.dev.html' : 'index.html'
   if (url === '/') {
     console.log('js:', url)
-    htmlStream = fs.createReadStream(path.resolve(__dirname, 'index.html'))
-    navStream = hyperstream({
-      'header': fromString(nav.toString())
-    })
-    htmlStream.pipe(navStream).pipe(res)
+    serveHtml(res, index)
   } else if (url === '/bundle.js') {
     console.log('js:', url)
     assets.js(req, res).pipe(res)
@@ -33,22 +30,22 @@ function handler (req, res) {
     assets.css(req, res).pipe(res)
   } else if (req.headers['accept'].indexOf('html') > 0) {
     console.log('html:', url)
-    htmlStream = fs.createReadStream(path.resolve(__dirname, 'index.html'))
-    navStream = hyperstream({
-      'header': fromString(nav.toString())
-    })
-    htmlStream.pipe(navStream).pipe(res)
-  } else if (staticAsset.test(url)) {
+    serveHtml(res, index)
+  } else if (url === '/service-worker.js' || url === '/manifest.json' || staticAsset.test(url)) {
     console.log('static:', url)
     assets.static(req).pipe(res)
   } else {
     console.log('other:', url)
-    htmlStream = fs.createReadStream(path.resolve(__dirname, 'index.html'))
-    navStream = hyperstream({
-      'header': fromString(nav.toString())
-    })
-    htmlStream.pipe(navStream).pipe(res)
+    serveHtml(res, index)
   }
+}
+
+function serveHtml (res, html) {
+  htmlStream = fs.createReadStream(path.resolve(__dirname, html))
+  navStream = hyperstream({
+    'header': fromString(nav.toString())
+  })
+  htmlStream.pipe(navStream).pipe(res)
 }
 
 function onlisten () {

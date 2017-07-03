@@ -5,8 +5,16 @@ var css = require('sheetify')
 var nanomorph = require('nanomorph')
 
 css('tachyons')
+var log
 
-var router = Router()
+if (process.env.NODE_ENV !== 'production') {
+  var Log = require('nanologger')
+  log = Log('pwa')
+} else {
+  registerServiceWorker('service-worker.js')
+}
+
+var router = Router({ onRender: renderRoute })
 var store = createStore(reducer)
 store.subscribe(render)
 
@@ -24,7 +32,8 @@ function timer () {
   var timeSpan = document.getElementById('time')
   setInterval(updateTime, 1000)
   function updateTime () {
-    timeSpan.innerHTML = new Date()
+    if (timeSpan) timeSpan.innerHTML = new Date()
+    else timeSpan = document.getElementById('time')
   }
 }
 
@@ -33,4 +42,47 @@ function render (prev, curr) {
   var _prev = router.rootEl.lasttElementChild || router.rootEl.lastChild
   var _curr = router.currentRoute.onStart(store)
   nanomorph(_prev, _curr)
+  log && log.info('re-rendered with state: ' + store.getState())
+}
+
+function renderRoute (prev, curr, cb) {
+  if (router.firstRender) {
+    router.firstRender = false
+    router.rootEl.appendChild(curr)
+    log && log.info('first render')
+  } else {
+    nanomorph(curr, prev)
+    log && log.info('render route for ' + window.location.pathname)
+  }
+  if (cb && typeof cb === 'function') {
+    cb()
+    log && log.info('callback for route ' + window.location.pathname)
+  }
+}
+
+function registerServiceWorker (file) {
+  if ('serviceWorker' in window.navigator && process.env.NODE_ENV === 'production') {
+    window.navigator.serviceWorker.register(file).then(function (reg) {
+      reg.onupdatefound = function () {
+        var installingWorker = reg.installing
+
+        installingWorker.onstatechange = function () {
+          switch (installingWorker.state) {
+            case 'installed':
+              if (window.navigator.serviceWorker.controller) {
+                console.log('New or updated content is available.')
+              } else {
+                console.log('Content is now available offline!')
+              }
+              break
+            case 'redundant':
+              console.error('The installing service worker became redundant.')
+              break
+          }
+        }
+      }
+    }).catch(function (e) {
+      console.error('Error during service worker registration:', e)
+    })
+  }
 }
